@@ -81,3 +81,23 @@ exports.handler = async (req, res) => {
         });
     }
 };
+// Add error handling for invalid URLs
+if (!url.includes('tiktok.com')) {
+    return res.status(400).json({
+        error: 'Please provide a valid TikTok URL'
+    });
+}
+
+// Add download functionality
+const downloadFile = async (fileUrl, type) => {
+    const response = await fetch(fileUrl);
+    const buffer = await response.buffer();
+    res.setHeader('Content-Disposition', `attachment; filename="tiktok_${type}.mp4"`);
+    res.send(buffer);
+};
+
+// Add to handler
+if (req.query.download === 'true') {
+    await downloadFile(data.data.hdplay, 'video');
+    return;
+}
